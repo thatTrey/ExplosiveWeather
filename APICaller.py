@@ -16,16 +16,11 @@ headers = {"accept": "application/json"}
 #Variable for holding the response recieved and the actual request to the API
 response = requests.get(url, headers=headers)
 
-print(response.text)
-print()
+r = json.loads(response.text)
 
-wjson = response.text
-wjdata = json.loads(wjson)
+for val in r["data"]["values"]:
+    print(val, ": ", r["data"]["values"][val])
 
-#Json probe tests
-for i in wjdata:
-    print(i)
-    print(wjdata["data"]["values"][i])
 
 """
 values returned in json format from the API
