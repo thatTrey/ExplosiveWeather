@@ -2,21 +2,34 @@ import json
 import requests
 import PySimpleGUI as sg
 
-#url = "https://api.tomorrow.io/v4/weather/realtime?location=indianapolis&apikey="
-
 location = "indianapolis"
 apikey = "9xi9ZXm6xNUKDVQDS6DQKsiwtuJMJb61"
 units= "imperial"
+calltype = "realtime"
 
-url = f'https://api.tomorrow.io/v4/weather/realtime?location={location}&units={units}&apikey={apikey}'
+#URL used to call the API
+url = f'https://api.tomorrow.io/v4/weather/{calltype}?location={location}&units={units}&apikey={apikey}'
 
+#Headers used for calling the API
 headers = {"accept": "application/json"}
 
+#Variable for holding the response recieved and the actual request to the API
 response = requests.get(url, headers=headers)
 
 print(response.text)
+print()
+
+wjson = response.text
+wjdata = json.loads(wjson)
+
+#Json probe tests
+for i in wjdata:
+    print(i)
+    print(wjdata["data"]["values"][i])
 
 """
+values returned in json format from the API
+
 data:{
     time:
     values:{
@@ -48,24 +61,4 @@ data:{
         type:
     }
 }
-
 """
-
-
-# sg.theme('DarkAmber')
-
-# layout = [
-#     [sg.Text('GUI Test')],
-#     [sg.Text('Please enter a test value'), sg.InputText()],
-#     [sg.Button('Ok'), sg.Button('Cancel')]
-#     ]
-
-# window = sg.Window('TestWindow', layout)
-
-# while True:
-#     event, values = window.read()
-#     if event == sg.WIN_CLOSED or event == 'Cancel':
-#         break
-#     print('You entered ', values[0])
-
-# window.close
