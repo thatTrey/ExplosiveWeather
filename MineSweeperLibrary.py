@@ -15,8 +15,6 @@ import numpy
 " 1  1  2 -1  1"
 " 1 -1  2  1  1"
 Board_Preset_1_easy = [[-1, 3, 2, 1, 0],[2, -1, -1, 1, 0], [1, 2, 2, 1, 1], [ 1, 1, 2, -1, 1], [1, -1, 2, 1, 1]]
-#print(Board_Preset_1_easy[3][1])
-
 
 "Board_Preset_2_easy"
 "-1  2  1  0  0"
@@ -28,6 +26,18 @@ Board_Preset_2_easy = [[-1, 2, 1, 0, 0],[3,-1, 2, 0, 0],[2,-1, 2, 0, 0],[2, 2, 1
 
 
 Board_Revealed_Preset_easy = [[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0]]
+
+
+"Board_Preset_1_hard"
+" 1  1  0  0  1  1  1  0"
+"-1  1  1  1  2 -1  1  0"
+" 2  2  2 -1  3  2  2  1"
+"-1  1  2 -1  2  1 -1  1"
+" 1  1  1  1  1  0  0\  1"
+" 0 -1  0  0  0 -1  0  0"
+" 0  0  0 -1  0  0 -1  0"
+" 0  0  0  0  0  0  0  0"
+
 
 
 #Class MineSweeperBoard
@@ -224,11 +234,36 @@ class MineSweeperBoard():
     print("This is the revealed board array")
     print(RevealedOutputString)
 
-      
+
+  # This flags a non-revealed square at the point x, y
+  def flag_square(self, x, y):
+    
+    #coordinates to indexes 
+    row_index = y-1
+    column_index = x-1
+
+    #checks to make sure square isnt already revealed
+    if(self.board_Array_Revealed[row_index][column_index] == 0):
+      self.board_Array_Revealed[row_index][column_index] = -1 #flags the square
 
 
-#test_list = [1][3]
-#print(test_list[0][0])
+  #used to validate user coordinate information, this is not used in any of the above methods. The above methods assume that the user data has
+  #already been validated. Accepts Coordinates NOT indexes, returns true if both coords are valid. 
+  @staticmethod
+  def user_input_validation(self, x_coord, y_coord):
+    if(x_coord > 0 and x_coord < self.__board_column_length):#validates x-coords
+      if(y_coord > 0 and y_coord < self.__board_row_length ):#validates y-coords
+          return True
+      else:
+        return False
+    else:
+      return False
+
+
+
+
+
+
 
 
 #Class MineSweeperGame - this might be added to the minesweeper board class later
