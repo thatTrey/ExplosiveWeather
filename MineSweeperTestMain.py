@@ -3,7 +3,8 @@ import MineSweeperLibrary as MineSweeperBackEnd
 
 def main():
     print("main")
-    dude = MineSweeperBackEnd.MineSweeperBoard()
+    dude = MineSweeperBackEnd.MineSweeperBoard("Hard")
+    print(MineSweeperBackEnd.MineSweeperBoard.GameData.difficulty_get() + " first main")
     #test = dude.board_Array[4][4]
     
     

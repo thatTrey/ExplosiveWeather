@@ -37,7 +37,9 @@ Board_Revealed_Preset_easy = [[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0
 " 1 -1  2  1  2 -1  2  1"
 " 1  1  2 -1  1  2 -1  1"
 " 0  0  1  1  1  1  1  1"
-Board_Preset_1_easy = [[1, 1, 0, 0, 1, 1, 1, 0], [-1, 1, 1, 1, 2, -1, 1, 0], [2, 2, 2, -1, 3, 2, 2, 1], [-1, 1, 2, -1, 2, 1, -1, 1], [2, 2, 2, 1, 2, 2, 2, 1], [1, -1, 2, 1, 2, -1, 2, 1],[1, 1, 2, -1, 1, 2, -1, 1],[0, 0, 1, 1, 1, 1, 1, 1]]
+Board_Preset_1_hard = [[1, 1, 0, 0, 1, 1, 1, 0], [-1, 1, 1, 1, 2, -1, 1, 0], [2, 2, 2, -1, 3, 2, 2, 1], [-1, 1, 2, -1, 2, 1, -1, 1], [2, 2, 2, 1, 2, 2, 2, 1], [1, -1, 2, 1, 2, -1, 2, 1],[1, 1, 2, -1, 1, 2, -1, 1],[0, 0, 1, 1, 1, 1, 1, 1]]
+
+Board_Revealed_Preset_hard = [[0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0]]
 
 
 #Class MineSweeperGame - this might be added to the minesweeper board class later
@@ -87,13 +89,16 @@ class MineSweeperGame:
   def difficulty_set(self, new_difficulty):
     
     if(new_difficulty == "Easy" or new_difficulty == "Hard"):#data validation, if invalid sets to Easy by default
-      self.UserName = new_difficulty
+      self.__GameDifficulty = new_difficulty
     else:
-      self.UserName = "Easy"
+      self.__GameDifficulty = "Easy"
 
+    print(self.__GameDifficulty + " set method")
 
+  
   def __init__(self, difficulty):
-    self.difficulty_set(self, difficulty)
+    print("game constructor")
+    self.difficulty_set(difficulty)
 
 
 
@@ -142,7 +147,7 @@ class MineSweeperBoard():
   #full of dummy values 
   board_Array = numpy.array([0])
   #intializes the board_Array_revealed array to all 0's
-  board_Array_Revealed = [0]
+  board_Array_Revealed = numpy.array([0])
 
   #defines board size based on difficulty
   __board_row_length = 5
@@ -156,17 +161,19 @@ class MineSweeperBoard():
   Board_Preset =  2
 
   #I decided to move the minesweepergame data object into the minesweeper board instead of vice versa 
-  GameData = MineSweeperGame.MineSweeperGame()
+  GameData = MineSweeperGame("Easy")
 
   #constructor
   #Chooses from the board presets (based on difficulty) and populates the board.
   def __init__(self, difficulty):
-    "#"
-    #sets board preset, change later to choose from mulitple using case structure
-    self.board_Array = Board_Preset_2_easy.copy()
-    "#"
-    #intializes the board_Array_revealed array to all 0's
-    self.board_Array_Revealed = Board_Revealed_Preset_easy.copy()
+    
+    print("board constructor enter")
+    #changes difficulty
+    self.GameData.difficulty_set(difficulty)
+    print(self.GameData.difficulty_get() + " board constructor leave")
+    
+    #creates new board
+    self.new_board()
 
   #When the player selects a square that does not have a bomb or is next to one, Bomb_data == 0,
   #The remaining touching squares are removed until squares touching bombs are revealed
@@ -239,7 +246,8 @@ class MineSweeperBoard():
    #iterates through the boards to look for a win condition, if all bombless squares are revealed then the player has won. 
    while (row_index < self.__board_row_length):
      while (col_index < self.__board_column_length):
-       print("row: " + str(row_index)  + ", col: " + str(col_index))
+       #debug stuff
+       #print("row: " + str(row_index)  + ", col: " + str(col_index))
        if(self.board_Array_Revealed[row_index][col_index] == 0 and self.board_Array[row_index][col_index] != -1):#if the current index location is both a non-bomb and is not revealed, return 'continue'
          return "continue" #player has not won because they still need to reveal some non-bomb square
        col_index = col_index + 1 # increments column
@@ -323,18 +331,68 @@ class MineSweeperBoard():
     
 
   #used to keep track of all of the previously played boards 
-  previous_boards_easy = []
-  previous_boards_hard = [0]
+  previous_boards_easy = numpy.array([0])
+  previous_boards_hard = numpy.array([0])
+
+
   #used to select boards to either start or restart the game
-  def new_board(self):"NOT FINISHED AT ALL"
+  def new_board(self):
+    "NOT FINISHED AT ALL"
+    #random num used to select board 
     random_board_num  = 0
 
+    #updates index lengths for boards 
+    if(self.GameData.difficulty_get() ==  "Easy"):
+      self.__board_row_length = 5
+      self.__board_column_length = 5
+    else: #if game is hard
+      self.__board_row_length = 8
+      self.__board_column_length = 8
+
+
+
+    #holds number of easy boards so that we know when to reset prvious boards 
+    num_of_easy_boards = 2 + 1 #since the array cant be empty, add one for the array index that is never empty
+    #akin to num_of_easy_boards
+    num_of_hard_boards = 1 + 1
+
+    #keeps generating new board numbers until an unused one is found
     while(True):
-      random_board_num = random.randint(1,3)
+      random_board_num = random.randint(1,3)#new random num
 
-      if(self.GameData.difficulty_get() == "Easy"):
-        if(random_board_num in self.previous_boards_easy):
-            continue #easy board has already been used 
+      if(self.GameData.difficulty_get() == "Easy"):#easy difficulty boards 
+        if(random_board_num in self.previous_boards_easy):#checks if current board has been used
+          if(self.previous_boards_easy.len == num_of_easy_boards):#if all boards have been used
+            self.previous_boards_easy = numpy.array[0]#resets used boards
+          else:
+           continue #easy board has already been used 
+        else:#found an acceptable easy board
+          self.previous_boards_easy = numpy.insert(self.previous_boards_easy, 0, random_board_num)#adds to used board
+          self.board_Array_Revealed = Board_Revealed_Preset_easy.copy()#resets revealed board 
+          break
+      else: #hard difficulty boards
+        if(random_board_num in self.previous_boards_hard):#checks if current board has been used
+          if(self.previous_boards_hard.len == num_of_hard_boards):#if all boards have been used
+            self.previous_boards_hard = numpy.array[0]#resets used boards
+          else:
+            continue #hard board has already been used 
+        else:#found an acceptable hard board
+          self.previous_boards_hard = numpy.insert(self.previous_boards_hard, 0, random_board_num)#adds to used boards
+          self.board_Array_Revealed = Board_Revealed_Preset_hard.copy()#resets revealed board 
+          break
 
+
+    #actually sets the board
+    if(self.GameData.difficulty_get() == "Easy"):
+     match random_board_num: #a case needs to be made for each board preset
+       case 1:
+         self.board_Array = Board_Preset_1_easy.copy()
+       case 2:
+         self.board_Array = Board_Preset_1_easy.copy()
+    else:#if difficulty hard
+       match random_board_num: #a case needs to be made for each board preset
+        case 1:
+         self.board_Array = Board_Preset_1_hard.copy()
+ 
 
 
