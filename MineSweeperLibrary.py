@@ -3,7 +3,7 @@ print("MineSweeperLibrary Run")
 
 #imports 
 import numpy
-
+import random
 #Board presets 
 "I havent quite figured this out but Im thinking that it might be a func that returns a Board_Array I would like to "
 "   do it this way so that MineSweeperBoard can stay relatively clean as putting in these presets would bloat the code."
@@ -33,10 +33,69 @@ Board_Revealed_Preset_easy = [[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[0
 "-1  1  1  1  2 -1  1  0"
 " 2  2  2 -1  3  2  2  1"
 "-1  1  2 -1  2  1 -1  1"
-" 1  1  1  1  1  0  0\  1"
-" 0 -1  0  0  0 -1  0  0"
-" 0  0  0 -1  0  0 -1  0"
-" 0  0  0  0  0  0  0  0"
+" 2  2  2  1  2  2  2  1"
+" 1 -1  2  1  2 -1  2  1"
+" 1  1  2 -1  1  2 -1  1"
+" 0  0  1  1  1  1  1  1"
+Board_Preset_1_easy = [[1, 1, 0, 0, 1, 1, 1, 0], [-1, 1, 1, 1, 2, -1, 1, 0], [2, 2, 2, -1, 3, 2, 2, 1], [-1, 1, 2, -1, 2, 1, -1, 1], [2, 2, 2, 1, 2, 2, 2, 1], [1, -1, 2, 1, 2, -1, 2, 1],[1, 1, 2, -1, 1, 2, -1, 1],[0, 0, 1, 1, 1, 1, 1, 1]]
+
+
+#Class MineSweeperGame - this might be added to the minesweeper board class later
+"-This object encapsulates everything needed to keep track of the current game"
+
+"Player Score"
+
+"Score_Get()"
+"-Returns current score"
+
+"Score_Manual_Update(int)"
+"-Allows manual update of the score, adds whatever parameter to score"
+
+"UserName"
+"-default AAA not needed but Im going to leave this in here in case it is needed."
+
+"Game_Difficulty"
+"-options are 'Easy' and 'Hard'"
+
+"Difficulty_Set(string difficulty)"
+"-used to set the Game_Difficulty string"
+
+class MineSweeperGame:
+
+  #player score var
+  __player_score = 0
+
+  #Returns current score
+  def score_get(self):
+    return self.player_score
+  
+  #Allows manual update of the score, adds whatever parameter to score
+  def Score_Manual_Update(self, int_score):
+    self.__player_score += int_score
+  
+  #default AAA not needed but Im going to leave this in here in case it is needed
+  UserName ="AAA"
+
+  #options are 'Easy' and 'Hard'
+  __GameDifficulty = "Easy"
+
+  #returns game difficulty
+  def difficulty_get(self):
+    return self.__GameDifficulty
+
+  #used to set the difficulty of the game
+  def difficulty_set(self, new_difficulty):
+    
+    if(new_difficulty == "Easy" or new_difficulty == "Hard"):#data validation, if invalid sets to Easy by default
+      self.UserName = new_difficulty
+    else:
+      self.UserName = "Easy"
+
+
+  def __init__(self, difficulty):
+    self.difficulty_set(self, difficulty)
+
+
 
 
 
@@ -96,9 +155,12 @@ class MineSweeperBoard():
   #"-This holds the board preset that was randomly chosen, after board object constructor this wil mainly be used for debug."
   Board_Preset =  2
 
+  #I decided to move the minesweepergame data object into the minesweeper board instead of vice versa 
+  GameData = MineSweeperGame.MineSweeperGame()
+
   #constructor
   #Chooses from the board presets (based on difficulty) and populates the board.
-  def __init__(self):
+  def __init__(self, difficulty):
     "#"
     #sets board preset, change later to choose from mulitple using case structure
     self.board_Array = Board_Preset_2_easy.copy()
@@ -258,46 +320,21 @@ class MineSweeperBoard():
         return False
     else:
       return False
+    
+
+  #used to keep track of all of the previously played boards 
+  previous_boards_easy = []
+  previous_boards_hard = [0]
+  #used to select boards to either start or restart the game
+  def new_board(self):"NOT FINISHED AT ALL"
+    random_board_num  = 0
+
+    while(True):
+      random_board_num = random.randint(1,3)
+
+      if(self.GameData.difficulty_get() == "Easy"):
+        if(random_board_num in self.previous_boards_easy):
+            continue #easy board has already been used 
 
 
 
-
-
-
-
-
-#Class MineSweeperGame - this might be added to the minesweeper board class later
-"-This object encapsulates everything needed to keep track of the current game"
-
-"Player Score"
-
-"Board object"
-"-An object that is used to keep track of the current minesweeper board"
-
-"Score_Get()"
-"-Returns current score"
-
-"Score_Manual_Update(int)"
-"-Allows manual update of the score, adds whatever parameter to score"
-
-"UserName"
-"-default AAA not needed but Im going to leave this in here in case it is needed."
-
-"Game_Difficulty"
-"-options are 'Easy' and 'Hard'"
-
-"Difficulty_Set(string difficulty)"
-"-used to set the Game_Difficulty string"
-
-
-
-
-
-
-
-#random/ ignore 
- #col = 0
-    #while(col != self.board_column_length):
-    #  row = 0
-    #  while(row != self.board_row_length):
-    #     board_Array_Revealed = [[row][col]]
